@@ -20,29 +20,37 @@
     var CONFIG = {"hostname":"zkingkzing.github.io","root":"/","scheme":"Gemini","version":"7.7.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
   </script>
 
-  <meta name="description" content="学习&amp;分享">
-<meta property="og:type" content="website">
-<meta property="og:title" content="柚見">
-<meta property="og:url" content="https://zkingkzing.github.io/index.html">
+  <meta name="description" content="什么是FRP？&amp;emsp;&amp;emsp;frp 是一个可用于内网穿透的高性能的反向代理应用，支持 tcp, udp 协议，为 http 和 https 应用协议提供了额外的能力，且尝试性支持了点对点穿透，有了它就可以在本地搭建环境通过公网进行测试，是不是很棒。 &amp;emsp;&amp;emsp;让我们来简单的了解一下它的架构  frps为服务端，使用它的公网地址作为中转 frpc为客户端，配置完成后可以使用公">
+<meta property="og:type" content="article">
+<meta property="og:title" content="内网穿透之FRP">
+<meta property="og:url" content="https://zkingkzing.github.io/2020/03/02/FRP/index.html">
 <meta property="og:site_name" content="柚見">
-<meta property="og:description" content="学习&amp;分享">
+<meta property="og:description" content="什么是FRP？&amp;emsp;&amp;emsp;frp 是一个可用于内网穿透的高性能的反向代理应用，支持 tcp, udp 协议，为 http 和 https 应用协议提供了额外的能力，且尝试性支持了点对点穿透，有了它就可以在本地搭建环境通过公网进行测试，是不是很棒。 &amp;emsp;&amp;emsp;让我们来简单的了解一下它的架构  frps为服务端，使用它的公网地址作为中转 frpc为客户端，配置完成后可以使用公">
 <meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://zkingkzing.github.io/images/frp-architecture.png">
+<meta property="og:image" content="https://zkingkzing.github.io/images/frp-ssh.png">
+<meta property="article:published_time" content="2020-03-02T13:40:20.000Z">
+<meta property="article:modified_time" content="2020-03-02T14:48:12.413Z">
 <meta property="article:author" content="USee">
+<meta property="article:tag" content="Frp">
+<meta property="article:tag" content="网络">
+<meta property="article:tag" content="斐讯">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://zkingkzing.github.io/images/frp-architecture.png">
 
-<link rel="canonical" href="https://zkingkzing.github.io/">
+<link rel="canonical" href="https://zkingkzing.github.io/2020/03/02/FRP/">
 
 
 <script id="page-configurations">
   // https://hexo.io/docs/variables.html
   CONFIG.page = {
     sidebar: "",
-    isHome : true,
-    isPost : false
+    isHome : false,
+    isPost : true
   };
 </script>
 
-  <title>柚見</title>
+  <title>内网穿透之FRP | 柚見</title>
   
 
 
@@ -177,10 +185,10 @@
             
 
   <div class="posts-expand">
-        
+      
   
   
-  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="https://zkingkzing.github.io/2020/03/02/FRP/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -194,8 +202,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          
-            <a href="/2020/03/02/FRP/" class="post-title-link" itemprop="url">内网穿透之FRP</a>
+          内网穿透之FRP
         </h1>
 
         <div class="post-meta">
@@ -220,7 +227,7 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <h2 id="什么是FRP？"><a href="#什么是FRP？" class="headerlink" title="什么是FRP？"></a>什么是FRP？</h2><p>&emsp;&emsp;frp 是一个可用于内网穿透的高性能的反向代理应用，支持 tcp, udp 协议，为 http 和 https 应用协议提供了额外的能力，且尝试性支持了点对点穿透，有了它就可以在本地搭建环境通过公网进行测试，是不是很棒。</p>
+        <h2 id="什么是FRP？"><a href="#什么是FRP？" class="headerlink" title="什么是FRP？"></a>什么是FRP？</h2><p>&emsp;&emsp;frp 是一个可用于内网穿透的高性能的反向代理应用，支持 tcp, udp 协议，为 http 和 https 应用协议提供了额外的能力，且尝试性支持了点对点穿透，有了它就可以在本地搭建环境通过公网进行测试，是不是很棒。</p>
 <p>&emsp;&emsp;让我们来简单的了解一下它的架构<br><img src="/images/frp-architecture.png" alt="frp架构"></p>
 <ul>
 <li>frps为服务端，使用它的公网地址作为中转</li>
@@ -270,140 +277,38 @@
 <li>另外也可以参考frp的官方<a href="https://github.com/fatedier/frp/blob/master/README_zh.md" target="_blank" rel="noopener">README</a></li>
 </ul>
 
-      
     </div>
 
     
     
     
+
       <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
+          <div class="post-tags">
+              <a href="/tags/Frp/" rel="tag"># Frp</a>
+              <a href="/tags/%E7%BD%91%E7%BB%9C/" rel="tag"># 网络</a>
+              <a href="/tags/%E6%96%90%E8%AE%AF/" rel="tag"># 斐讯</a>
+          </div>
 
         
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://zkingkzing.github.io/2020/02/29/hello-world/">
 
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="USee">
-      <meta itemprop="description" content="学习&分享">
-    </span>
 
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="柚見">
-    </span>
-      <header class="post-header">
-        <h1 class="post-title" itemprop="name headline">
-          
-            <a href="/2020/02/29/hello-world/" class="post-title-link" itemprop="url">Hello Github&Hexo</a>
-        </h1>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2020-02-29 03:39:06" itemprop="dateCreated datePublished" datetime="2020-02-29T03:39:06+08:00">2020-02-29</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-03-01 19:35:16" itemprop="dateModified" datetime="2020-03-01T19:35:16+08:00">2020-03-01</time>
-              </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="A、创建专用仓库"><a href="#A、创建专用仓库" class="headerlink" title="A、创建专用仓库"></a>A、创建专用仓库</h2><ul>
-<li>新建git代码库命名为<code>ID.github.io</code></li>
-<li>成功后可得域名<code>https://ID.github.in</code></li>
-<li>使用私有域名进行解析<blockquote>
-<p><code>ping id.github.io</code>     解析出该域名的ip地址</p>
-<blockquote>
-<p>购买域名后使用免费域名（通过域名提供商或CF）解析到该ip即可</p>
-</blockquote>
-</blockquote>
-</li>
-</ul>
-<hr>
-<h2 id="B、准备本地Git环境"><a href="#B、准备本地Git环境" class="headerlink" title="B、准备本地Git环境"></a>B、准备本地Git环境</h2><h3 id="a、SSH配置"><a href="#a、SSH配置" class="headerlink" title="a、SSH配置"></a>a、SSH配置</h3><h4 id="首先查看设备是否已经有ssh密钥对"><a href="#首先查看设备是否已经有ssh密钥对" class="headerlink" title="首先查看设备是否已经有ssh密钥对"></a>首先查看设备是否已经有ssh密钥对</h4><ul>
-<li>Windows<br>  C:\用户\Username\ .ssh  </li>
-<li>WSL &amp; Linux<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">cd C:\Users\USee\AppData\Local\Packages\CanonicalGroupLimited.UbuntuonWindows_79rhkp1fndgsc\LocalState\rootfs\home\usee\.ssh  </span><br><span class="line">cd ~/.ssh</span><br></pre></td></tr></table></figure>
-<h4 id="若没有ssh密钥对，则手动生成"><a href="#若没有ssh密钥对，则手动生成" class="headerlink" title="若没有ssh密钥对，则手动生成"></a>若没有ssh密钥对，则手动生成</h4><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ssh-keygen -t rsa -C "admin@123.com"    #回车默认即可</span><br></pre></td></tr></table></figure>
-进入.ssh文件夹中，使用notepad++或者<code>cat</code>等命令获取公钥<strong>id_rsa.pub</strong><br>复制到github密钥栏中</li>
-</ul>
-<h3 id="b、下载Git"><a href="#b、下载Git" class="headerlink" title="b、下载Git"></a>b、下载Git</h3><ul>
-<li><p>Windows<br>推荐使用<a href="https://github.com/cmderdev/cmder/releases" target="_blank" rel="noopener">Cmder终端</a>，集成了Git并可以在win环境中使用常用的shell命令</p>
-</li>
-<li><p>WSL &amp; Linux</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> 默认自带</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> 安装</span></span><br><span class="line">yum install git -y  </span><br><span class="line">sudo apt-get install git</span><br></pre></td></tr></table></figure></li>
-<li><p>查看git版本</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git --version</span><br></pre></td></tr></table></figure>
-
-</li>
-</ul>
-<h3 id="c、配置基本git信息"><a href="#c、配置基本git信息" class="headerlink" title="c、配置基本git信息"></a>c、配置基本git信息</h3><ul>
-<li>配置git<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">git config --global user.name "USee"</span><br><span class="line">git config --global user.email "邮箱"</span><br></pre></td></tr></table></figure>
-</li>
-</ul>
-<hr>
-<h2 id="C、开始建站"><a href="#C、开始建站" class="headerlink" title="C、开始建站"></a>C、开始建站</h2><h3 id="a、克隆仓库到本地"><a href="#a、克隆仓库到本地" class="headerlink" title="a、克隆仓库到本地"></a>a、克隆仓库到本地</h3><pre><code>git clone git@github.com:ZKingKZing/ZKingKZing.github.io.git</code></pre><h3 id="b、安装Nodejs"><a href="#b、安装Nodejs" class="headerlink" title="b、安装Nodejs"></a>b、安装Nodejs</h3><ul>
-<li><p>Windows<br><a href="https://nodejs.org/en" target="_blank" rel="noopener">下载</a>安装即可</p>
-</li>
-<li><p>WSL &amp; Linux</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">wget https://nodejs.org/dist/v13.9.0/node-v13.9.0-linux-x64.tar.xz       #自行选择对应版本  </span><br><span class="line">tar xf node....tar.xz -C /usr/local/</span><br><span class="line">cd /usr/local/  </span><br><span class="line">mv node....  nodejs  </span><br><span class="line">ln -s /usr/local/nodejs/bin/node /usr/local/bin  </span><br><span class="line">ln -s /usr/local/nodejs/bin/npm /usr/local/bin  </span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> 查看版本</span></span><br><span class="line">node -v        </span><br><span class="line">npm -v</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> 更换npm淘宝源  </span></span><br><span class="line">npm config set registry https://registry.npm.taobao.org  </span><br><span class="line"><span class="meta">#</span><span class="bash"> 检测是否更换</span></span><br><span class="line">npm config get registry</span><br></pre></td></tr></table></figure>
-
-</li>
-</ul>
-<h3 id="c、安装Hexo"><a href="#c、安装Hexo" class="headerlink" title="c、安装Hexo"></a>c、安装Hexo</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> 下载并安装</span></span><br><span class="line">npm install -g hexo-cli</span><br><span class="line">hexo init </span><br><span class="line">npm install</span><br><span class="line">hexo -v         //查看版本</span><br><span class="line"></span><br><span class="line">hexo new XX     //新建XX</span><br><span class="line">hexo generate   //生成静态网站</span><br><span class="line">hexo server     //开启服务    </span><br><span class="line">hexo clean      //清理缓存</span><br><span class="line">hexo deploy     //更新上传，首次使用时安装以下插件</span><br><span class="line">npm install hexo-deployer-git --save</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> 修改配置文件</span></span><br><span class="line">vim _config.yml</span><br></pre></td></tr></table></figure>
-<h3 id="d、NEXT主题"><a href="#d、NEXT主题" class="headerlink" title="d、NEXT主题"></a>d、NEXT主题</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> 下载next主题</span></span><br><span class="line">git clone git@github.com:theme-next/hexo-theme-next.git themes/next  </span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> 修改配置文件</span></span><br><span class="line">vim themes/next/_config.yml</span><br></pre></td></tr></table></figure>
-<hr>
-<h2 id="D、编辑内容"><a href="#D、编辑内容" class="headerlink" title="D、编辑内容"></a>D、编辑内容</h2><h3 id="a、新建侧栏菜单"><a href="#a、新建侧栏菜单" class="headerlink" title="a、新建侧栏菜单"></a>a、新建侧栏菜单</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> 添加菜单主页项,查找`menu`选项按格式添加即可</span></span><br><span class="line">vim theme/next/_config.yml   </span><br><span class="line"></span><br><span class="line">hexo new page about  	//tags、categroies 类似</span><br><span class="line">vim source/about/index.md	//修改主页</span><br><span class="line"> </span><br><span class="line">hexo new page about  --path about/me "自述"      #可直接生成 /shouce/about/me.md 文件，内容标题为 自述</span><br></pre></td></tr></table></figure>
-
-<h3 id="b、新建文章"><a href="#b、新建文章" class="headerlink" title="b、新建文章"></a>b、新建文章</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">hexo new test</span><br><span class="line">vim source/_posts/test.md</span><br><span class="line"></span><br><span class="line">显示部分</span><br><span class="line">&lt;!--more--&gt;</span><br><span class="line">隐藏部分</span><br></pre></td></tr></table></figure>
-
-<h3 id="c、添加标签"><a href="#c、添加标签" class="headerlink" title="c、添加标签"></a>c、添加标签</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">vim source/_posts/test.md</span><br><span class="line">tags: 标签                #单个标签</span><br><span class="line">tags: ["Hexo","Github","Nodejs"]        #多标签</span><br></pre></td></tr></table></figure>
-
-<h3 id="d、添加分类"><a href="#d、添加分类" class="headerlink" title="d、添加分类"></a>d、添加分类</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">vim source/_posts/test.md</span><br><span class="line">categroies: 前端</span><br></pre></td></tr></table></figure>
-<hr>
-<h2 id="E、更新博客"><a href="#E、更新博客" class="headerlink" title="E、更新博客"></a>E、更新博客</h2><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">hexo clean	    #清除  </span><br><span class="line">hexo n XX       #新建XX</span><br><span class="line">hexo g		    #生成  </span><br><span class="line">hexo s		    #本地测试  </span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> 更新上传</span></span><br><span class="line">hexo d  </span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> 生成并更新</span></span><br><span class="line">hexo g -d  </span><br><span class="line">hexo d -g</span><br></pre></td></tr></table></figure>
-      
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2020/02/29/hello-world/" rel="prev" title="Hello Github&Hexo">
+      <i class="fa fa-chevron-left"></i> Hello Github&Hexo
+    </a></div>
+      <div class="post-nav-item"></div>
     </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
       </footer>
+    
   </article>
   
   
   
 
   </div>
-
-  
-
 
 
           </div>
@@ -454,6 +359,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#什么是FRP？"><span class="nav-number">1.</span> <span class="nav-text">什么是FRP？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#部署"><span class="nav-number">2.</span> <span class="nav-text">部署</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#前期准备"><span class="nav-number">2.1.</span> <span class="nav-text">前期准备</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#已有VPS接着步骤继续往下"><span class="nav-number">2.1.1.</span> <span class="nav-text">已有VPS接着步骤继续往下</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#设置frp服务器"><span class="nav-number">3.</span> <span class="nav-text">设置frp服务器</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#设置客户端同；"><span class="nav-number">4.</span> <span class="nav-text">设置客户端同；</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#修改配置文件"><span class="nav-number">4.0.1.</span> <span class="nav-text">修改配置文件</span></a></li></ol></li></ol></li></ol></div>
       </div>
       <!--/noindex-->
 
