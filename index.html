@@ -206,7 +206,7 @@
               <span class="post-meta-item-text">发表于</span>
               
 
-              <time title="创建时间：2020-03-02 21:40:20 / 修改时间：23:05:25" itemprop="dateCreated datePublished" datetime="2020-03-02T21:40:20+08:00">2020-03-02</time>
+              <time title="创建时间：2020-03-02 21:40:20 / 修改时间：23:08:55" itemprop="dateCreated datePublished" datetime="2020-03-02T21:40:20+08:00">2020-03-02</time>
             </span>
 
           
@@ -221,56 +221,14 @@
 
       
           <h2 id="什么是FRP？"><a href="#什么是FRP？" class="headerlink" title="什么是FRP？"></a>什么是FRP？</h2><p>&emsp;&emsp;frp 是一个可用于内网穿透的高性能的反向代理应用，支持 tcp, udp 协议，为 http 和 https 应用协议提供了额外的能力，且尝试性支持了点对点穿透，有了它就可以在本地搭建环境通过公网进行测试，是不是很棒。</p>
-<p>&emsp;&emsp;让我们来简单的了解一下它的架构<br><img src="/images/frp-architecture.png" alt="frp架构"></p>
-<ul>
-<li>frps为服务端，使用它的公网地址作为中转</li>
-<li>frpc为客户端，配置完成后可以使用公网访问内网资源<h2 id="部署"><a href="#部署" class="headerlink" title="部署"></a>部署</h2><h3 id="前期准备"><a href="#前期准备" class="headerlink" title="前期准备"></a>前期准备</h3></li>
-<li>让我们来简单的了解一下它的架构<br>首先我们需要一个vps作为中转节点，要有固定的公网ip即可，如果没有的小伙伴可以自配一台，推荐<a href="https://www.vultr.com/?ref=8452616-6G" target="_blank" rel="noopener">Vultr</a>、<a href="https://www.aliyun.com/minisite/goods?userCode=ghpvyny5" target="_blank" rel="noopener">阿里云</a>、<a href="https://url.cn/56NA2Et" target="_blank" rel="noopener">腾讯云</a>；<br>活动力度比较大，Vultr为推广链接，新用户注册有赠送 100$；腾讯阿里云新用户购买最低1折起，所以需要的可以看一下。</li>
-</ul>
-<h4 id="已有VPS接着步骤继续往下"><a href="#已有VPS接着步骤继续往下" class="headerlink" title="已有VPS接着步骤继续往下"></a>已有VPS接着步骤继续往下</h4><h2 id="设置frp服务器"><a href="#设置frp服务器" class="headerlink" title="设置frp服务器"></a>设置frp服务器</h2><p>根据自己的系统下载frp，并进行解压缩；</p>
-<ul>
-<li><p>通过XShell等将frps、frps.ini上传至有公网地址的服务器上；我这里使用的是MobaXterm，可以直接拖拽上传</p>
-</li>
-<li><p>直接最小配置启动 </p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">cd /usr/frps     #进入存放目录</span><br><span class="line">./frps -c ./frps.ini    #最小执行</span><br></pre></td></tr></table></figure>
-<blockquote>
-<p>#若提示：<code>-bash: ./frps: No such file or directory</code><br>则进行赋权：<code>chmod +x frps</code><br>将frps注册为服务项，可以上传解压缩包中的 <code>systemd/frps.server</code> 至服务器 <code>/lib/systemd/system/</code> 文件夹中</p>
-</blockquote>
-</li>
-<li><p>设置服务自启动</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo systemctl enable frps.server</span><br></pre></td></tr></table></figure>
-<blockquote>
-<p>也可以通过修改frps.ini进行详细配置，通过 <code>reload</code> 重新加载</p>
-</blockquote>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo systemctl reload frps.serve</span><br></pre></td></tr></table></figure>
-<h2 id="设置客户端同；"><a href="#设置客户端同；" class="headerlink" title="设置客户端同；"></a>设置客户端同；</h2></li>
-<li><p>根据自己的系统下载frp，并进行解压缩；</p>
-</li>
-<li><p>将 frpc、frpc.ini 放置在内网设置目录中</p>
-</li>
-</ul>
-<h4 id="修改配置文件"><a href="#修改配置文件" class="headerlink" title="修改配置文件"></a>修改配置文件</h4><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cd /usr/fepc    #进入存放目录</span><br></pre></td></tr></table></figure>
-<ul>
-<li><p>编辑配置文件：</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">vim frpc.ini     #内容如下（此处以ssh为例）</span><br><span class="line"></span><br><span class="line">[common]</span><br><span class="line">server_addr = 服务器公网 IP</span><br><span class="line">server_port = 7000</span><br><span class="line"></span><br><span class="line">[ssh]</span><br><span class="line">type = tcp</span><br><span class="line">local_ip = 127.0.0.1</span><br><span class="line">local_port = 22</span><br><span class="line">remote_port = 7003</span><br></pre></td></tr></table></figure></li>
-<li><p>赋权执行</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">chmod +x frpc</span><br><span class="line">./frpc -c ./frpc.ini</span><br></pre></td></tr></table></figure>
-<blockquote>
-<p>注册为服务项，上传解压缩包中 <code>systemd/frpc.server</code> 至内网设备 <code>/lib/systemd/system/</code> 文件夹</p>
-</blockquote>
-</li>
-<li><p>自启动：</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sudo systemctl enable frpc.server</span><br><span class="line">sudo systemctl start frpc.server</span><br></pre></td></tr></table></figure></li>
-<li><p>远程访问测试<br>SSH</p>
-</li>
-</ul>
-<img src="/images/frp-ssh.png">
-
-<ul>
-<li>详细配置说明可以参考解压缩包中的 <code>frpc/s_full.ini</code></li>
-<li>另外也可以参考frp的官方<a href="https://github.com/fatedier/frp/blob/master/README_zh.md" target="_blank" rel="noopener">README</a></li>
-</ul>
-
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2020/03/02/FRP/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
       
     </div>
 
@@ -320,7 +278,7 @@
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-03-01 19:35:16" itemprop="dateModified" datetime="2020-03-01T19:35:16+08:00">2020-03-01</time>
+                <time title="修改时间：2020-03-02 23:08:40" itemprop="dateModified" datetime="2020-03-02T23:08:40+08:00">2020-03-02</time>
               </span>
 
           
@@ -345,48 +303,14 @@
 </blockquote>
 </li>
 </ul>
-<hr>
-<h2 id="B、准备本地Git环境"><a href="#B、准备本地Git环境" class="headerlink" title="B、准备本地Git环境"></a>B、准备本地Git环境</h2><h3 id="a、SSH配置"><a href="#a、SSH配置" class="headerlink" title="a、SSH配置"></a>a、SSH配置</h3><h4 id="首先查看设备是否已经有ssh密钥对"><a href="#首先查看设备是否已经有ssh密钥对" class="headerlink" title="首先查看设备是否已经有ssh密钥对"></a>首先查看设备是否已经有ssh密钥对</h4><ul>
-<li>Windows<br>  C:\用户\Username\ .ssh  </li>
-<li>WSL &amp; Linux<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">cd C:\Users\USee\AppData\Local\Packages\CanonicalGroupLimited.UbuntuonWindows_79rhkp1fndgsc\LocalState\rootfs\home\usee\.ssh  </span><br><span class="line">cd ~/.ssh</span><br></pre></td></tr></table></figure>
-<h4 id="若没有ssh密钥对，则手动生成"><a href="#若没有ssh密钥对，则手动生成" class="headerlink" title="若没有ssh密钥对，则手动生成"></a>若没有ssh密钥对，则手动生成</h4><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ssh-keygen -t rsa -C "admin@123.com"    #回车默认即可</span><br></pre></td></tr></table></figure>
-进入.ssh文件夹中，使用notepad++或者<code>cat</code>等命令获取公钥<strong>id_rsa.pub</strong><br>复制到github密钥栏中</li>
-</ul>
-<h3 id="b、下载Git"><a href="#b、下载Git" class="headerlink" title="b、下载Git"></a>b、下载Git</h3><ul>
-<li><p>Windows<br>推荐使用<a href="https://github.com/cmderdev/cmder/releases" target="_blank" rel="noopener">Cmder终端</a>，集成了Git并可以在win环境中使用常用的shell命令</p>
-</li>
-<li><p>WSL &amp; Linux</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> 默认自带</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> 安装</span></span><br><span class="line">yum install git -y  </span><br><span class="line">sudo apt-get install git</span><br></pre></td></tr></table></figure></li>
-<li><p>查看git版本</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git --version</span><br></pre></td></tr></table></figure>
-
-</li>
-</ul>
-<h3 id="c、配置基本git信息"><a href="#c、配置基本git信息" class="headerlink" title="c、配置基本git信息"></a>c、配置基本git信息</h3><ul>
-<li>配置git<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">git config --global user.name "USee"</span><br><span class="line">git config --global user.email "邮箱"</span><br></pre></td></tr></table></figure>
-</li>
-</ul>
-<hr>
-<h2 id="C、开始建站"><a href="#C、开始建站" class="headerlink" title="C、开始建站"></a>C、开始建站</h2><h3 id="a、克隆仓库到本地"><a href="#a、克隆仓库到本地" class="headerlink" title="a、克隆仓库到本地"></a>a、克隆仓库到本地</h3><pre><code>git clone git@github.com:ZKingKZing/ZKingKZing.github.io.git</code></pre><h3 id="b、安装Nodejs"><a href="#b、安装Nodejs" class="headerlink" title="b、安装Nodejs"></a>b、安装Nodejs</h3><ul>
-<li><p>Windows<br><a href="https://nodejs.org/en" target="_blank" rel="noopener">下载</a>安装即可</p>
-</li>
-<li><p>WSL &amp; Linux</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">wget https://nodejs.org/dist/v13.9.0/node-v13.9.0-linux-x64.tar.xz       #自行选择对应版本  </span><br><span class="line">tar xf node....tar.xz -C /usr/local/</span><br><span class="line">cd /usr/local/  </span><br><span class="line">mv node....  nodejs  </span><br><span class="line">ln -s /usr/local/nodejs/bin/node /usr/local/bin  </span><br><span class="line">ln -s /usr/local/nodejs/bin/npm /usr/local/bin  </span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> 查看版本</span></span><br><span class="line">node -v        </span><br><span class="line">npm -v</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> 更换npm淘宝源  </span></span><br><span class="line">npm config set registry https://registry.npm.taobao.org  </span><br><span class="line"><span class="meta">#</span><span class="bash"> 检测是否更换</span></span><br><span class="line">npm config get registry</span><br></pre></td></tr></table></figure>
-
-</li>
-</ul>
-<h3 id="c、安装Hexo"><a href="#c、安装Hexo" class="headerlink" title="c、安装Hexo"></a>c、安装Hexo</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> 下载并安装</span></span><br><span class="line">npm install -g hexo-cli</span><br><span class="line">hexo init </span><br><span class="line">npm install</span><br><span class="line">hexo -v         //查看版本</span><br><span class="line"></span><br><span class="line">hexo new XX     //新建XX</span><br><span class="line">hexo generate   //生成静态网站</span><br><span class="line">hexo server     //开启服务    </span><br><span class="line">hexo clean      //清理缓存</span><br><span class="line">hexo deploy     //更新上传，首次使用时安装以下插件</span><br><span class="line">npm install hexo-deployer-git --save</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> 修改配置文件</span></span><br><span class="line">vim _config.yml</span><br></pre></td></tr></table></figure>
-<h3 id="d、NEXT主题"><a href="#d、NEXT主题" class="headerlink" title="d、NEXT主题"></a>d、NEXT主题</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> 下载next主题</span></span><br><span class="line">git clone git@github.com:theme-next/hexo-theme-next.git themes/next  </span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> 修改配置文件</span></span><br><span class="line">vim themes/next/_config.yml</span><br></pre></td></tr></table></figure>
-<hr>
-<h2 id="D、编辑内容"><a href="#D、编辑内容" class="headerlink" title="D、编辑内容"></a>D、编辑内容</h2><h3 id="a、新建侧栏菜单"><a href="#a、新建侧栏菜单" class="headerlink" title="a、新建侧栏菜单"></a>a、新建侧栏菜单</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> 添加菜单主页项,查找`menu`选项按格式添加即可</span></span><br><span class="line">vim theme/next/_config.yml   </span><br><span class="line"></span><br><span class="line">hexo new page about  	//tags、categroies 类似</span><br><span class="line">vim source/about/index.md	//修改主页</span><br><span class="line"> </span><br><span class="line">hexo new page about  --path about/me "自述"      #可直接生成 /shouce/about/me.md 文件，内容标题为 自述</span><br></pre></td></tr></table></figure>
-
-<h3 id="b、新建文章"><a href="#b、新建文章" class="headerlink" title="b、新建文章"></a>b、新建文章</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">hexo new test</span><br><span class="line">vim source/_posts/test.md</span><br><span class="line"></span><br><span class="line">显示部分</span><br><span class="line">&lt;!--more--&gt;</span><br><span class="line">隐藏部分</span><br></pre></td></tr></table></figure>
-
-<h3 id="c、添加标签"><a href="#c、添加标签" class="headerlink" title="c、添加标签"></a>c、添加标签</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">vim source/_posts/test.md</span><br><span class="line">tags: 标签                #单个标签</span><br><span class="line">tags: ["Hexo","Github","Nodejs"]        #多标签</span><br></pre></td></tr></table></figure>
-
-<h3 id="d、添加分类"><a href="#d、添加分类" class="headerlink" title="d、添加分类"></a>d、添加分类</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">vim source/_posts/test.md</span><br><span class="line">categroies: 前端</span><br></pre></td></tr></table></figure>
-<hr>
-<h2 id="E、更新博客"><a href="#E、更新博客" class="headerlink" title="E、更新博客"></a>E、更新博客</h2><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">hexo clean	    #清除  </span><br><span class="line">hexo n XX       #新建XX</span><br><span class="line">hexo g		    #生成  </span><br><span class="line">hexo s		    #本地测试  </span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> 更新上传</span></span><br><span class="line">hexo d  </span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> 生成并更新</span></span><br><span class="line">hexo g -d  </span><br><span class="line">hexo d -g</span><br></pre></td></tr></table></figure>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2020/02/29/hello-world/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
       
     </div>
 
