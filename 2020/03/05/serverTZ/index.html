@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"zkingkzing.github.io","root":"/","scheme":"Gemini","version":"7.7.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="概述一直想为自己的vps安装状态监控，方便随时进行查看状态；经过一番查找，有以下几款比较优秀：  NetDate、一款特别炫酷的开源探针，经了解发现，占用资源比较高；能十分详细的了解到自己主机的各方面状态，但是不能为监控面板提供加密，导致任何人都能够进入查看，所以个人不推荐使用。Demo   SeverStatus、非常轻便的一款探针，能够显示最基本的状态信息，我本人使用的是基于这个的多次改版的H">
+<meta property="og:type" content="article">
+<meta property="og:title" content="国内VPS安装ServerStatus探针">
+<meta property="og:url" content="https://zkingkzing.github.io/2020/03/05/serverTZ/index.html">
+<meta property="og:site_name" content="柚見">
+<meta property="og:description" content="概述一直想为自己的vps安装状态监控，方便随时进行查看状态；经过一番查找，有以下几款比较优秀：  NetDate、一款特别炫酷的开源探针，经了解发现，占用资源比较高；能十分详细的了解到自己主机的各方面状态，但是不能为监控面板提供加密，导致任何人都能够进入查看，所以个人不推荐使用。Demo   SeverStatus、非常轻便的一款探针，能够显示最基本的状态信息，我本人使用的是基于这个的多次改版的H">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://zkingkzing.github.io/images/new-TZ-page.png">
+<meta property="article:published_time" content="2020-03-05T11:36:52.000Z">
+<meta property="article:modified_time" content="2020-03-05T13:53:35.275Z">
+<meta property="article:author" content="USee">
+<meta property="article:tag" content="ServerStatus">
+<meta property="article:tag" content="阿里云">
+<meta property="article:tag" content="腾讯云">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://zkingkzing.github.io/images/new-TZ-page.png">
+
+<link rel="canonical" href="https://zkingkzing.github.io/2020/03/05/serverTZ/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true
+  };
+</script>
+
+  <title>国内VPS安装ServerStatus探针 | 柚見</title>
+  
+
+
+  <script>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?93fb774ae039a1751737e87ac2a2f314";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">柚見</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+        <p class="site-subtitle">USee's Blog</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-schedule">
+
+    <a href="/schedule/" rel="section"><i class="fa fa-fw fa-calendar"></i>日程表</a>
+
+  </li>
+        <li class="menu-item menu-item-sitemap">
+
+    <a href="/sitemap.xml" rel="section"><i class="fa fa-fw fa-sitemap"></i>站点地图</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-fw fa-user"></i>关于</a>
+
+  </li>
+  </ul>
+
+</nav>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://zkingkzing.github.io/2020/03/05/serverTZ/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="USee">
+      <meta itemprop="description" content="愛吃柚子的熊">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="柚見">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          国内VPS安装ServerStatus探针
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2020-03-05 19:36:52 / 修改时间：21:53:35" itemprop="dateCreated datePublished" datetime="2020-03-05T19:36:52+08:00">2020-03-05</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h2><p>一直想为自己的vps安装状态监控，方便随时进行查看状态；经过一番查找，有以下几款比较优秀：</p>
+<ul>
+<li><a href="https://github.com/netdata/netdata" target="_blank" rel="noopener"><strong>NetDate</strong></a>、一款特别炫酷的开源探针，经了解发现，占用资源比较高；能十分详细的了解到自己主机的各方面状态，但是不能为监控面板提供加密，导致任何人都能够进入查看，所以个人不推荐使用。<br><a href="https://singapore.my-netdata.io/default.html" target="_blank" rel="noopener">Demo</a>  </li>
+<li><a href="https://github.com/BotoX/ServerStatus" target="_blank" rel="noopener"><strong>SeverStatus</strong></a>、非常轻便的一款探针，能够显示最基本的状态信息，我本人使用的是基于这个的多次改版的<a href="https://github.com/CokeMine/ServerStatus-Hotaru" target="_blank" rel="noopener">Hotaru</a>,修改的更为美观。<br><a href="http://tz.useenet.cn/" target="_blank" rel="noopener">Demo</a></li>
+<li><a href="https://github.com/afaqurk/linux-dash" target="_blank" rel="noopener"><strong>Linux Dash</strong></a>、功能齐全，面板直观，单VPS使用极佳。<br><a href="https://afaqurk.github.io/linux-dash/" target="_blank" rel="noopener">Demo</a>  </li>
+<li><a href="https://github.com/walkor/workerman-vmstat" target="_blank" rel="noopener"><strong>Vmstat</strong></a>、功能简洁直观，不过也是单VPS使用。<br><a href="http://www.workerman.net/demos/vmstat/" target="_blank" rel="noopener">Demo</a></li>
+</ul>
+<a id="more"></a>
+
+<h2 id="食用方式"><a href="#食用方式" class="headerlink" title="食用方式"></a>食用方式</h2><ol>
+<li>有科学上网条件的可以直接使用以下脚本进行安装（会要求安装Caddy，与Nginx不能同时安装，有能力的自行DIY）<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">wget https://raw.githubusercontent.com/CokeMine/ServerStatus-Hotaru/master/status.sh</span><br><span class="line">bash status.sh s</span><br></pre></td></tr></table></figure></li>
+<li>国内VPS可以手动编译安装，可搭配宝塔使用Nginx提供服务<h3 id="PS：（以下使用方式二，方式一直接运行傻瓜安装即可）"><a href="#PS：（以下使用方式二，方式一直接运行傻瓜安装即可）" class="headerlink" title="PS：（以下使用方式二，方式一直接运行傻瓜安装即可）"></a>PS：（以下使用方式二，方式一直接运行傻瓜安装即可）</h3><h2 id="开始安装"><a href="#开始安装" class="headerlink" title="开始安装"></a>开始安装</h2></li>
+</ol>
+<ul>
+<li>下载ServerStatus基础包并解压<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">git clone </span><br><span class="line">mv 改名</span><br><span class="line">mv .. /usr/serverTZ</span><br></pre></td></tr></table></figure>
+<h2 id="安装服务端"><a href="#安装服务端" class="headerlink" title="安装服务端"></a>安装服务端</h2></li>
+</ul>
+<ol>
+<li>使用宝塔创建一个空网页（PS：域名框使用域名或IP均可）<br><img src="/images/new-TZ-page.png" alt="tz-pange">  </li>
+<li>复制监控展示页到宝塔新建的网站目录中<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cp -r /usr/serverTZ/web/* /www/wwwroot/`default`</span><br></pre></td></tr></table></figure></li>
+<li>进入服务端配置目录<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cd /usr/serverTZ/server</span><br></pre></td></tr></table></figure></li>
+<li>安装环境并进行编译<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">apt-get install gcc gcc-c++ kernel-devel -y</span><br><span class="line">make</span><br></pre></td></tr></table></figure></li>
+<li>配置服务端信息<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">vim config.json</span><br><span class="line">&#123;"servers":</span><br><span class="line">        [                </span><br><span class="line">            &#123;</span><br><span class="line">                "username": "username",</span><br><span class="line">                "password": "password",</span><br><span class="line">                "name": "vpsname",</span><br><span class="line">                "type": "type",</span><br><span class="line">                "host": "No",</span><br><span class="line">                "location": "China",</span><br><span class="line">                "disabled": false,</span><br><span class="line">                "region":"CN"</span><br><span class="line">            &#125;,</span><br><span class="line">            &#123;</span><br><span class="line">                此模板可以添加多个VPS,自行添加即可</span><br><span class="line">                "username": "连接用户名",</span><br><span class="line">                "password": "连接密码",</span><br><span class="line">                "name": "监控显示名称",</span><br><span class="line">                "type": "监控显示类型",</span><br><span class="line">                "host": "No",</span><br><span class="line">                "location": "国家",</span><br><span class="line">                "disabled": false,</span><br><span class="line">                "region":"国旗"</span><br><span class="line">            &#125;,   #注意此处的逗号（国旗后无需添加，在新增的括号后加即可）</span><br><span class="line">        ]    </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+<li>在宝塔中打开serverTZ默认端口：<code>35601</code></li>
+<li>编辑完成后，在<code>server</code>目下进行测试,webdir为web站点路径<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">./sergate --config=config.json --web-dir=/www/wwwroot/`default`</span><br></pre></td></tr></table></figure></li>
+<li>进入对应的监控站点查看是否有监控网页模板<h3 id="将此进程注册为系统服务"><a href="#将此进程注册为系统服务" class="headerlink" title="将此进程注册为系统服务"></a>将此进程注册为系统服务</h3><blockquote>
+<p>关闭之前进程,进入<code>/usr/serverTZ/systemd/</code></p>
+</blockquote>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ctrl + c</span><br><span class="line">cd ../systemd</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>注册过程，系统服务文件我已经编辑好，直接使用即可</p>
+</blockquote>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash">赋权  </span></span><br><span class="line">chmod +x serverTZs.service</span><br><span class="line"><span class="meta">#</span><span class="bash">拷贝进系统服务目录  </span></span><br><span class="line">cp serverTZs.service /lib/systemd/system</span><br><span class="line"><span class="meta">#</span><span class="bash">重新加载系统服务  </span></span><br><span class="line">systemctl daemon-reload</span><br><span class="line"><span class="meta">#</span><span class="bash">启动服务端并设置开机自启  </span></span><br><span class="line">systemctl start serverTZs.service  </span><br><span class="line">systemctl enable serverTZs.service</span><br><span class="line"><span class="meta">#</span><span class="bash">在配置文件中增加vps后  </span></span><br><span class="line">systemctl restart serverTZs.service</span><br></pre></td></tr></table></figure>
+<h2 id="安装客户端"><a href="#安装客户端" class="headerlink" title="安装客户端"></a>安装客户端</h2><h3 id="此处在服务端中部署客户端监控本机为例"><a href="#此处在服务端中部署客户端监控本机为例" class="headerlink" title="此处在服务端中部署客户端监控本机为例"></a>此处在服务端中部署客户端监控本机为例</h3></li>
+<li>下载、解压、更名、移动目录同服务端部署</li>
+<li>进入客户端配置目录<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cd /usr/serverTZ/clients</span><br></pre></td></tr></table></figure></li>
+<li>检查已安装的python版本<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python -V       #版本需要2.7及以上</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>若无执行客户端运行环境</p>
+</blockquote>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">apt-get install epel-release python-pip</span><br><span class="line">apt-get update</span><br><span class="line">apt-get install gcc python-devel</span><br><span class="line">pip install psutil</span><br></pre></td></tr></table></figure></li>
+<li>修改客户端配置文件<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">vim status-client.py</span><br><span class="line"></span><br><span class="line">SERVER = "127.0.0.1"        #修改为服务端地址</span><br><span class="line">PORT = 35601      </span><br><span class="line">USER = "USER"       #客户端用户名</span><br><span class="line">PASSWORD = "USER_PASSWORD"  #客户端密码</span><br><span class="line">INTERVAL = 1        #更新间隔</span><br></pre></td></tr></table></figure></li>
+<li>运行测试<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python status-client.py</span><br></pre></td></tr></table></figure>
+<h3 id="将此进程注册为系统服务-1"><a href="#将此进程注册为系统服务-1" class="headerlink" title="将此进程注册为系统服务"></a>将此进程注册为系统服务</h3><blockquote>
+<p>关闭之前进程,进入<code>/usr/serverTZ/systemd/</code></p>
+</blockquote>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ctrl + c</span><br><span class="line">cd ../systemd</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>注册过程，系统服务文件我已经编辑好，直接使用即可</p>
+</blockquote>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash">赋权  </span></span><br><span class="line">chmod +x serverTZc.service</span><br><span class="line"><span class="meta">#</span><span class="bash">拷贝进系统服务目录  </span></span><br><span class="line">cp serverTZc.service /lib/systemd/system</span><br><span class="line"><span class="meta">#</span><span class="bash">重新加载系统服务  </span></span><br><span class="line">systemctl daemon-reload</span><br><span class="line"><span class="meta">#</span><span class="bash">启动服务端并设置开机自启  </span></span><br><span class="line">systemctl start serverTZc.service  </span><br><span class="line">systemctl enable serverTZc.service</span><br><span class="line"><span class="meta">#</span><span class="bash">在配置文件中增加vps后  </span></span><br><span class="line">systemctl restart serverTZc.service</span><br></pre></td></tr></table></figure>
+<h2 id="关于修改解压后的目录"><a href="#关于修改解压后的目录" class="headerlink" title="关于修改解压后的目录"></a>关于修改解压后的目录</h2><blockquote>
+<p>可以自定义任何位置，记得修改<code>systemd/</code>中的注册系统服务文件即可</p>
+</blockquote>
+</li>
+</ol>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/ServerStatus/" rel="tag"># ServerStatus</a>
+              <a href="/tags/%E9%98%BF%E9%87%8C%E4%BA%91/" rel="tag"># 阿里云</a>
+              <a href="/tags/%E8%85%BE%E8%AE%AF%E4%BA%91/" rel="tag"># 腾讯云</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2020/03/02/FRP/" rel="prev" title="内网穿透之FRP">
+      <i class="fa fa-chevron-left"></i> 内网穿透之FRP
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let activeClass = CONFIG.comments.activeClass;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#概述"><span class="nav-number">1.</span> <span class="nav-text">概述</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#食用方式"><span class="nav-number">2.</span> <span class="nav-text">食用方式</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#PS：（以下使用方式二，方式一直接运行傻瓜安装即可）"><span class="nav-number">2.1.</span> <span class="nav-text">PS：（以下使用方式二，方式一直接运行傻瓜安装即可）</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#开始安装"><span class="nav-number">3.</span> <span class="nav-text">开始安装</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#安装服务端"><span class="nav-number">4.</span> <span class="nav-text">安装服务端</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#将此进程注册为系统服务"><span class="nav-number">4.1.</span> <span class="nav-text">将此进程注册为系统服务</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#安装客户端"><span class="nav-number">5.</span> <span class="nav-text">安装客户端</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#此处在服务端中部署客户端监控本机为例"><span class="nav-number">5.1.</span> <span class="nav-text">此处在服务端中部署客户端监控本机为例</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#将此进程注册为系统服务-1"><span class="nav-number">5.2.</span> <span class="nav-text">将此进程注册为系统服务</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#关于修改解压后的目录"><span class="nav-number">6.</span> <span class="nav-text">关于修改解压后的目录</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">USee</p>
+  <div class="site-description" itemprop="description">愛吃柚子的熊</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">3</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">9</span>
+        <span class="site-state-item-name">标签</span>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/zkingkzing" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;zkingkzing" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://www.instagram.com/caelan_zking/" title="Instagram → https:&#x2F;&#x2F;www.instagram.com&#x2F;caelan_zking&#x2F;" rel="noopener" target="_blank"><i class="fa fa-fw fa-instagram"></i>Instagram</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">USee</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v4.2.0
+  </div>
+  <span class="post-meta-divider">|</span>
+  <div class="theme-info">主题 – <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> v7.7.2
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  
+  <script color='0,0,255' opacity='0.5' zIndex='-1' count='99' src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>
