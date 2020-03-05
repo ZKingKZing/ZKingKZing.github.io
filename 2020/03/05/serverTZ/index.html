@@ -29,7 +29,7 @@
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://zkingkzing.github.io/images/new-TZ-page.png">
 <meta property="article:published_time" content="2020-03-05T11:36:52.000Z">
-<meta property="article:modified_time" content="2020-03-05T13:53:35.275Z">
+<meta property="article:modified_time" content="2020-03-05T13:57:40.325Z">
 <meta property="article:author" content="USee">
 <meta property="article:tag" content="ServerStatus">
 <meta property="article:tag" content="阿里云">
@@ -212,7 +212,7 @@
               <span class="post-meta-item-text">发表于</span>
               
 
-              <time title="创建时间：2020-03-05 19:36:52 / 修改时间：21:53:35" itemprop="dateCreated datePublished" datetime="2020-03-05T19:36:52+08:00">2020-03-05</time>
+              <time title="创建时间：2020-03-05 19:36:52 / 修改时间：21:57:40" itemprop="dateCreated datePublished" datetime="2020-03-05T19:36:52+08:00">2020-03-05</time>
             </span>
 
           
@@ -245,12 +245,12 @@
 </ul>
 <ol>
 <li>使用宝塔创建一个空网页（PS：域名框使用域名或IP均可）<br><img src="/images/new-TZ-page.png" alt="tz-pange">  </li>
-<li>复制监控展示页到宝塔新建的网站目录中<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cp -r /usr/serverTZ/web/* /www/wwwroot/`default`</span><br></pre></td></tr></table></figure></li>
+<li>复制监控展示页到宝塔新建的网站目录中<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cp -r /usr/serverTZ/web/* /www/wwwroot/tz       #设置自己新建的web路径</span><br></pre></td></tr></table></figure></li>
 <li>进入服务端配置目录<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cd /usr/serverTZ/server</span><br></pre></td></tr></table></figure></li>
 <li>安装环境并进行编译<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">apt-get install gcc gcc-c++ kernel-devel -y</span><br><span class="line">make</span><br></pre></td></tr></table></figure></li>
 <li>配置服务端信息<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">vim config.json</span><br><span class="line">&#123;"servers":</span><br><span class="line">        [                </span><br><span class="line">            &#123;</span><br><span class="line">                "username": "username",</span><br><span class="line">                "password": "password",</span><br><span class="line">                "name": "vpsname",</span><br><span class="line">                "type": "type",</span><br><span class="line">                "host": "No",</span><br><span class="line">                "location": "China",</span><br><span class="line">                "disabled": false,</span><br><span class="line">                "region":"CN"</span><br><span class="line">            &#125;,</span><br><span class="line">            &#123;</span><br><span class="line">                此模板可以添加多个VPS,自行添加即可</span><br><span class="line">                "username": "连接用户名",</span><br><span class="line">                "password": "连接密码",</span><br><span class="line">                "name": "监控显示名称",</span><br><span class="line">                "type": "监控显示类型",</span><br><span class="line">                "host": "No",</span><br><span class="line">                "location": "国家",</span><br><span class="line">                "disabled": false,</span><br><span class="line">                "region":"国旗"</span><br><span class="line">            &#125;,   #注意此处的逗号（国旗后无需添加，在新增的括号后加即可）</span><br><span class="line">        ]    </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
 <li>在宝塔中打开serverTZ默认端口：<code>35601</code></li>
-<li>编辑完成后，在<code>server</code>目下进行测试,webdir为web站点路径<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">./sergate --config=config.json --web-dir=/www/wwwroot/`default`</span><br></pre></td></tr></table></figure></li>
+<li>编辑完成后，在<code>server</code>目下进行测试,webdir为web站点路径<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">./sergate --config=config.json --web-dir=/www/wwwroot/tz        #设置自己新建的web路径</span><br></pre></td></tr></table></figure></li>
 <li>进入对应的监控站点查看是否有监控网页模板<h3 id="将此进程注册为系统服务"><a href="#将此进程注册为系统服务" class="headerlink" title="将此进程注册为系统服务"></a>将此进程注册为系统服务</h3><blockquote>
 <p>关闭之前进程,进入<code>/usr/serverTZ/systemd/</code></p>
 </blockquote>
